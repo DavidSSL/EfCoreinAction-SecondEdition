@@ -9,7 +9,8 @@ Anyway, here are is what I had to do.
 I used Docker to install MS SQL because on Linux [we don't have localDB](https://github.com/dotnet/efcore/issues/6336#issuecomment-240857551). 
 
 ```shell
-docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YOUR_OWN_PASSWORD' -p 1433:1433 -d mcr.microsoft.com/mssql/server:latest
+docker run -e 'ACCEPT_EULA=Y' --user 'root' -e 'SA_PASSWORD=YOUR_OWN_PASSWORD' -p 1433:1433 -v ~/MsSqlData/2019/data:/var/opt/mssql/data -v ~/MsSqlData/2019/log:/var/opt/mssql/log -v ~/MsSqlData/2019/secrets:/var/opt/mssql/secrets -d --name 'MSSql2019-dev' mcr.microsoft.com/mssql/server:2019-latest
+
 ```
 
 Then in the various connection strings in the solution, you will have to change them to:
