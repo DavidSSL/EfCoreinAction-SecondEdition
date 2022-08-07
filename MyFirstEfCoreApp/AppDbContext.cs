@@ -1,23 +1,33 @@
 ﻿// Copyright (c) 2020 Jon P Smith, GitHub: JonPSmith, web: http://www.thereformedprogrammer.net/
 // Licensed under MIT license. See License.txt in the project root for license information.
 
+using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace MyFirstEfCoreApp
 {
     public class AppDbContext : DbContext
     {
-        private const string ConnectionString = //#A
-            @"Server=(localdb)\mssqllocaldb;
-             Database=MyFirstEfCoreDb;
-             Trusted_Connection=True";
+        private readonly string connectionString ; //#A
+
+        public AppDbContext()
+        {
+            var config = new ConfigurationBuilder()
+                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+                .AddJsonFile("appsettings.Development.json")
+                .AddUserSecrets<Program>()
+                .Build();
+
+            connectionString = config.GetConnectionString("MyFirstDb");
+        }
 
         public DbSet<Book> Books { get; set; }
 
         protected override void OnConfiguring(
             DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(ConnectionString); //#B
+            optionsBuilder.UseSqlServer(connectionString); //#B
         }
     }
 
