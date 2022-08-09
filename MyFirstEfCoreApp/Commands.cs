@@ -126,18 +126,16 @@ namespace MyFirstEfCoreApp
         /// <returns>returns true if database database was created</returns>
         public static bool WipeCreateSeed(bool onlyIfNoDatabase)
         {
-            using (var db = new AppDbContext())
-            {
-                if (onlyIfNoDatabase && (db.GetService<IDatabaseCreator>() as RelationalDatabaseCreator).Exists())
-                    return false;
+            using var db = new AppDbContext();
+            if (onlyIfNoDatabase && (db.GetService<IDatabaseCreator>() as RelationalDatabaseCreator).Exists())
+                return false;
 
-                db.Database.EnsureDeleted();
-                db.Database.EnsureCreated();
-                if (!db.Books.Any())
-                {
-                    WriteTestData(db);
-                    Console.WriteLine("Seeded database");
-                }
+            db.Database.EnsureDeleted();
+            db.Database.EnsureCreated();
+            if (!db.Books.Any())
+            {
+                WriteTestData(db);
+                Console.WriteLine("Seeded database");
             }
 
             return true;
